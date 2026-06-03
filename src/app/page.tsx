@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Terminal, Bot, FileCode2, Cpu, ShieldAlert, Zap, Activity } from 'lucide-react';
+import { PublicNavbar } from '@/components/landing/public-navbar';
+import { PublicFooter } from '@/components/landing/public-footer';
 
 export default async function Home() {
   const supabase = await createClient();
@@ -12,20 +14,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-green-500 font-mono selection:bg-green-500/30">
       {/* Top Navigation */}
-      <nav className="border-b border-green-500/20 bg-black/80 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Terminal className="w-6 h-6 text-green-400" />
-            <span className="font-bold text-xl tracking-tight text-green-400">~/ai-prd-generator</span>
-          </div>
-          <div className="flex gap-4 items-center">
-            <Link href="/login" className="text-sm text-green-500/70 hover:text-green-400 transition-colors">
-              [ Login ]
-            </Link>
-          </div>
-        </div>
-      </nav>
-      
+      <PublicNavbar />
       {/* Hero Section */}
       <main className="max-w-5xl mx-auto px-6 py-24 text-center">
         <div className="inline-flex items-center gap-2 bg-green-950/30 border border-green-500/30 text-green-400 text-sm px-4 py-1.5 rounded-sm mb-8">
@@ -94,6 +83,8 @@ export default async function Home() {
           ))}
         </div>
       </main>
+
+      <PublicFooter />
     </div>
   );
 }

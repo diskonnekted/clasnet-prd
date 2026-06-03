@@ -203,6 +203,9 @@ export class OrchestrateService {
       messageToUser = parsed.message_to_user || messageToUser;
     }
     
+    // Clean up any AI conversational filler at the end of the markdown
+    contentMarkdown = this.cleanConversationalFiller(contentMarkdown);
+    
     if (context.prd?.id) {
       await this.saveSection(context.prd.id, sectionNumber, contentMarkdown);
     }
@@ -425,5 +428,20 @@ export class OrchestrateService {
         content_markdown: content
       }
     };
+  }
+
+  private cleanConversationalFiller(content: string): string {
+    if (!content) return '';
+    
+    // Pattern 1: Explicit "Langkah Selanjutnya" or similar phrases until end of string
+    const pattern1 = /(?:\n\s*(?:---|___|\*\*\*)\s*)?\n\s*(?:\*\*|### )?(?:Langkah Selanjutnya|Next Steps?|Sebagai langkah selanjutnya|Langkah berikutnya)(?:\*\*|:)?[\s\S]*$/i;
+    
+    // Pattern 2: Sentences starting with "Bab X telah selesai. Apakah..." at the end
+    const pattern2 = /(?:\n\s*(?:---|___|\*\*\*)\s*)?\n\s*[^\n]*(?:telah selesai|sudah selesai|berhasil dibuat)[^\n]*(?:Apakah kita|Shall we|Lanjut|Lanjutkan)[\s\S]*$/i;
+    
+    let cleaned = content.replace(pattern1, '');
+    cleaned = cleaned.replace(pattern2, '');
+    
+    return cleaned.trim();
   }
 }
