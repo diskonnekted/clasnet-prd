@@ -1,63 +1,97 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { Terminal, Bot, FileCode2, Cpu, ShieldAlert, Zap, Activity } from 'lucide-react';
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (user) redirect('/projects');
+  
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-[#0a0a0a] text-green-500 font-mono selection:bg-green-500/30">
+      {/* Top Navigation */}
+      <nav className="border-b border-green-500/20 bg-black/80 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Terminal className="w-6 h-6 text-green-400" />
+            <span className="font-bold text-xl tracking-tight text-green-400">~/ai-prd-generator</span>
+          </div>
+          <div className="flex gap-4 items-center">
+            <Link href="/login" className="text-sm text-green-500/70 hover:text-green-400 transition-colors">
+              [ Login ]
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </nav>
+      
+      {/* Hero Section */}
+      <main className="max-w-5xl mx-auto px-6 py-24 text-center">
+        <div className="inline-flex items-center gap-2 bg-green-950/30 border border-green-500/30 text-green-400 text-sm px-4 py-1.5 rounded-sm mb-8">
+          <Zap className="w-4 h-4" /> root@claude-3.7-gpt4o: system online
+        </div>
+        
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white tracking-tight">
+          COMPILE IDEAS INTO <br />
+          <span className="text-green-500">PRODUCTION-READY PRD</span>
+        </h1>
+        
+        <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+          // The ultimate AI Product Manager. It extracts your raw thoughts, 
+          engineers BDD user stories, and outputs strict AI/ML specifications. 
+          Ready for immediate deployment.
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Link
+            href="/register"
+            className="group relative bg-green-500 text-black px-8 py-3 font-bold hover:bg-green-400 transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
+            <span className="absolute -inset-0.5 bg-green-500/50 blur opacity-0 group-hover:opacity-100 transition-opacity"></span>
+            <span className="relative">./execute_start.sh →</span>
+          </Link>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#modules"
+            className="border border-green-500/30 px-8 py-3 text-green-400 hover:bg-green-950/20 transition-colors"
           >
-            Documentation
+            view_modules()
           </a>
+        </div>
+        
+        {/* Terminal Window Mockup */}
+        <div className="mt-20 border border-green-500/20 bg-black rounded-lg text-left overflow-hidden shadow-[0_0_30px_rgba(34,197,94,0.1)]">
+          <div className="bg-[#111] px-4 py-2 border-b border-green-500/20 flex gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+          </div>
+          <div className="p-6 text-sm text-gray-300">
+            <span className="text-green-500">user@admin:~$</span> init prd-generator<br/>
+            <span className="text-blue-400">[INFO]</span> Loading Maestro Orchestrator... OK<br/>
+            <span className="text-blue-400">[INFO]</span> Initializing Nemesis Critique Agent... OK<br/>
+            <span className="text-blue-400">[INFO]</span> Connecting to Supabase Matrix... ESTABLISHED<br/>
+            <span className="text-green-500">user@admin:~$</span> _
+            <span className="animate-pulse inline-block w-2 h-4 bg-green-500 align-middle ml-1"></span>
+          </div>
+        </div>
+        
+        {/* Features Grid */}
+        <div id="modules" className="grid md:grid-cols-3 gap-6 mt-24 text-left">
+          {[
+            { icon: <Bot className="w-7 h-7" />, title: 'AI Co-Pilot', desc: 'Context-aware autonomous agent attached to your project environment.' },
+            { icon: <FileCode2 className="w-7 h-7" />, title: 'BDD Compilation', desc: 'Strict Given/When/Then acceptance criteria ready for automated testing.' },
+            { icon: <Cpu className="w-7 h-7" />, title: 'AI/ML Spec Engine', desc: 'Generates model parameters, fallback vectors, and cost estimations.' },
+            { icon: <ShieldAlert className="w-7 h-7" />, title: 'Devil\'s Advocate', desc: 'Nemesis agent runs vulnerability scans on your PRD logic.' },
+            { icon: <Zap className="w-7 h-7" />, title: 'One-Click Patch', desc: 'Deploy AI-suggested fixes instantly with inline diff previews.' },
+            { icon: <Activity className="w-7 h-7" />, title: 'Heuristic Scoring', desc: '7-dimensional quality metrics to gauge deployment readiness.' },
+          ].map((f, i) => (
+            <div key={i} className="bg-[#111]/50 border border-green-500/20 p-6 hover:border-green-500/50 transition-colors group">
+              <div className="mb-4 text-green-500/70 group-hover:text-green-400">{f.icon}</div>
+              <h3 className="font-bold mb-2 text-gray-200 tracking-tight">{f.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
         </div>
       </main>
     </div>
