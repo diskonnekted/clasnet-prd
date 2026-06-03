@@ -68,15 +68,29 @@ export default function PricingPage() {
         </p>
         
         <div className="grid sm:grid-cols-2 gap-4 text-left">
-          <div className="border border-green-500/30 p-4 bg-black">
-            <h4 className="font-bold text-green-400 mb-2 flex items-center gap-2"><Zap className="w-4 h-4"/> PayPal</h4>
-            <p className="text-sm text-gray-300 font-mono">arif.susilo@gmail.com</p>
+          <div className="border border-green-500/30 p-6 bg-black flex flex-col items-start justify-center group">
+            <h4 className="font-bold text-gray-300 mb-4 flex items-center gap-2">
+              <Zap className="w-5 h-5 text-green-400" /> PayPal
+            </h4>
+            <a 
+              href="mailto:arif.susilo@gmail.com" 
+              className="bg-[#003087] hover:bg-[#001c52] text-white px-6 py-2.5 rounded-sm font-bold text-sm transition-colors inline-block w-full text-center"
+            >
+              Bayar via PayPal
+            </a>
           </div>
-          <div className="border border-green-500/30 p-4 bg-black">
-            <h4 className="font-bold text-green-400 mb-2 flex items-center gap-2"><MessageSquare className="w-4 h-4"/> Transfer Bank / E-Wallet</h4>
-            <p className="text-sm text-gray-300">Hubungi via WhatsApp:</p>
-            <a href="https://wa.me/6281328128315" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-green-300 font-bold font-mono inline-block mt-1">
-              0813-2812-8315
+          
+          <div className="border border-green-500/30 p-6 bg-black flex flex-col items-start justify-center group">
+            <h4 className="font-bold text-gray-300 mb-4 flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-green-400" /> Transfer Bank / E-Wallet
+            </h4>
+            <a 
+              href="https://wa.me/6281328128315" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="bg-[#25D366] hover:bg-[#1b9a4a] text-white px-6 py-2.5 rounded-sm font-bold text-sm transition-colors inline-block w-full text-center"
+            >
+              Chat via WhatsApp
             </a>
           </div>
         </div>
