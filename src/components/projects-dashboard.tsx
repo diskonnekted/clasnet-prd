@@ -250,12 +250,14 @@ export function ProjectsDashboard({ initialProjects }: ProjectsDashboardProps) {
             const progressPercent = Math.min(100, Math.round((generatedSections / totalSections) * 100));
 
             return (
-              <Link 
+              <div 
                 key={project.id}
-                href={`/projects/${project.id}`} 
-                className="block bg-white p-6 rounded-2xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all group relative"
+                className="block bg-white p-6 rounded-2xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all group relative overflow-hidden"
               >
-                <div className="flex justify-between items-start mb-4">
+                {/* Full card clickable link */}
+                <Link href={`/projects/${project.id}`} className="absolute inset-0 z-0" aria-label={`Buka proyek ${project.name}`}></Link>
+                
+                <div className="flex justify-between items-start mb-4 relative z-10 pointer-events-none">
                   <div className="flex items-center gap-2">
                     <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl group-hover:bg-purple-100 transition-colors">
                       {getDomainIcon(project.domain)}
@@ -264,62 +266,64 @@ export function ProjectsDashboard({ initialProjects }: ProjectsDashboardProps) {
                       {DOMAIN_LABELS[project.domain] || project.domain}
                     </span>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        onClick={(e) => e.preventDefault()}
-                        className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  <div className="pointer-events-auto">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer outline-none flex items-center justify-center"
                       >
                         <MoreVertical className="w-4 h-4" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem 
-                        onClick={(e) => { e.preventDefault(); router.push(`/projects/${project.id}?print=true`); }}
-                        className="cursor-pointer gap-2"
-                      >
-                        <Download className="w-4 h-4" /> Export to PDF
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={(e) => { e.preventDefault(); toast.info('Fitur Duplikat sedang dalam pengembangan.'); }}
-                        className="cursor-pointer gap-2"
-                      >
-                        <Copy className="w-4 h-4" /> Duplikat Proyek
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={(e) => handleDeleteProject(e, project.id, project.name)}
-                        className="cursor-pointer gap-2 text-red-600 focus:text-red-600 focus:bg-red-50"
-                      >
-                        <Trash2 className="w-4 h-4" /> Hapus
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-purple-600 transition-colors">
-                  {project.name}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-                  {project.description || 'Tidak ada deskripsi proyek.'}
-                </p>
-
-                {/* Progress Tracking */}
-                <div className="mb-4">
-                  <div className="flex justify-between items-center text-xs text-gray-500 mb-1.5 font-medium">
-                    <span>Progress Dokumen</span>
-                    <span>{generatedSections}/{totalSections} Bab</span>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem 
+                          onClick={(e) => { e.preventDefault(); router.push(`/projects/${project.id}?print=true`); }}
+                          className="cursor-pointer gap-2"
+                        >
+                          <Download className="w-4 h-4" /> Export to PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={(e) => { e.preventDefault(); toast.info('Fitur Duplikat sedang dalam pengembangan.'); }}
+                          className="cursor-pointer gap-2"
+                        >
+                          <Copy className="w-4 h-4" /> Duplikat Proyek
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={(e) => handleDeleteProject(e, project.id, project.name)}
+                          className="cursor-pointer gap-2 text-red-600 focus:text-red-600 focus:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4" /> Hapus
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <Progress value={progressPercent} className="h-1.5 bg-gray-100" />
                 </div>
+                
+                <div className="relative pointer-events-none">
+                  <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-purple-600 transition-colors">
+                    {project.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+                    {project.description || 'Tidak ada deskripsi proyek.'}
+                  </p>
 
-                <div className="text-[10px] text-gray-400 font-medium pt-3 border-t flex justify-between items-center">
-                  <span>Terakhir diedit: {new Date(project.updated_at).toLocaleDateString('id-ID')}</span>
-                  {project.has_ai_features && (
-                    <span className="text-purple-600 font-semibold bg-purple-50 px-2 py-0.5 rounded text-[9px] uppercase tracking-wide">
-                      AI Enabled
-                    </span>
-                  )}
+                  {/* Progress Tracking */}
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center text-xs text-gray-500 mb-1.5 font-medium">
+                      <span>Progress Dokumen</span>
+                      <span>{generatedSections}/{totalSections} Bab</span>
+                    </div>
+                    <Progress value={progressPercent} className="h-1.5 bg-gray-100" />
+                  </div>
+
+                  <div className="text-[10px] text-gray-400 font-medium pt-3 border-t flex justify-between items-center">
+                    <span>Terakhir diedit: {new Date(project.updated_at).toLocaleDateString('id-ID')}</span>
+                    {project.has_ai_features && (
+                      <span className="text-purple-600 font-semibold bg-purple-50 px-2 py-0.5 rounded text-[9px] uppercase tracking-wide">
+                        AI Enabled
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
 
