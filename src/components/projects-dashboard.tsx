@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Plus, Monitor, Smartphone, Globe, Code, Cpu, Landmark, HeartPulse, HardDrive, LayoutGrid, Trash2 } from 'lucide-react';
+import { Plus, Monitor, Smartphone, Globe, Code, Cpu, Landmark, HeartPulse, HardDrive, LayoutGrid, Trash2, MoreVertical, Copy, Download } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +24,7 @@ interface Project {
   has_ai_features: boolean;
   status: string;
   updated_at: string;
+  prd_documents?: { prd_sections: [{ count: number }] }[];
 }
 
 interface ProjectsDashboardProps {
@@ -238,45 +241,87 @@ export function ProjectsDashboard({ initialProjects }: ProjectsDashboardProps) {
         </div>
       ) : (
         <div className="grid md:grid-cols-3 gap-6">
-          {projects.map((project) => (
-            <Link 
-              key={project.id}
-              href={`/projects/${project.id}`} 
-              className="block bg-white p-6 rounded-2xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all group relative"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl group-hover:bg-purple-100 transition-colors">
-                    {getDomainIcon(project.domain)}
+          {projects.map((project) => {
+            const totalSections = project.has_ai_features ? 11 : 10;
+            let generatedSections = 0;
+            if (project.prd_documents?.[0]?.prd_sections?.[0]?.count) {
+              generatedSections = project.prd_documents[0].prd_sections[0].count;
+            }
+            const progressPercent = Math.min(100, Math.round((generatedSections / totalSections) * 100));
+
+            return (
+              <Link 
+                key={project.id}
+                href={`/projects/${project.id}`} 
+                className="block bg-white p-6 rounded-2xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all group relative"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2.5 bg-purple-50 text-purple-600 rounded-xl group-hover:bg-purple-100 transition-colors">
+                      {getDomainIcon(project.domain)}
+                    </div>
+                    <span className="text-[10px] font-bold tracking-wider uppercase bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md">
+                      {DOMAIN_LABELS[project.domain] || project.domain}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-bold tracking-wider uppercase bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md">
-                    {DOMAIN_LABELS[project.domain] || project.domain}
-                  </span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        onClick={(e) => e.preventDefault()}
+                        className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem 
+                        onClick={(e) => { e.preventDefault(); router.push(`/projects/${project.id}?print=true`); }}
+                        className="cursor-pointer gap-2"
+                      >
+                        <Download className="w-4 h-4" /> Export to PDF
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={(e) => { e.preventDefault(); toast.info('Fitur Duplikat sedang dalam pengembangan.'); }}
+                        className="cursor-pointer gap-2"
+                      >
+                        <Copy className="w-4 h-4" /> Duplikat Proyek
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={(e) => handleDeleteProject(e, project.id, project.name)}
+                        className="cursor-pointer gap-2 text-red-600 focus:text-red-600 focus:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" /> Hapus
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-                <button
-                  onClick={(e) => handleDeleteProject(e, project.id, project.name)}
-                  className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                  title="Hapus Proyek"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-purple-600 transition-colors">
-                {project.name}
-              </h3>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-                {project.description || 'Tidak ada deskripsi proyek.'}
-              </p>
-              <div className="text-[10px] text-gray-400 font-medium pt-3 border-t flex justify-between items-center">
-                <span>Terakhir diedit: {new Date(project.updated_at).toLocaleDateString('id-ID')}</span>
-                {project.has_ai_features && (
-                  <span className="text-purple-600 font-semibold bg-purple-50 px-2 py-0.5 rounded text-[9px] uppercase tracking-wide">
-                    AI Enabled
-                  </span>
-                )}
-              </div>
-            </Link>
-          ))}
+                <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-purple-600 transition-colors">
+                  {project.name}
+                </h3>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+                  {project.description || 'Tidak ada deskripsi proyek.'}
+                </p>
+
+                {/* Progress Tracking */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center text-xs text-gray-500 mb-1.5 font-medium">
+                    <span>Progress Dokumen</span>
+                    <span>{generatedSections}/{totalSections} Bab</span>
+                  </div>
+                  <Progress value={progressPercent} className="h-1.5 bg-gray-100" />
+                </div>
+
+                <div className="text-[10px] text-gray-400 font-medium pt-3 border-t flex justify-between items-center">
+                  <span>Terakhir diedit: {new Date(project.updated_at).toLocaleDateString('id-ID')}</span>
+                  {project.has_ai_features && (
+                    <span className="text-purple-600 font-semibold bg-purple-50 px-2 py-0.5 rounded text-[9px] uppercase tracking-wide">
+                      AI Enabled
+                    </span>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
 
           {/* Quick Create Card */}
           <div 

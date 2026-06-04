@@ -15,7 +15,12 @@ export default async function ProjectsPage() {
   // Fetch real projects owned by the user
   const { data: projects, error } = await supabase
     .from('projects')
-    .select('*')
+    .select(`
+      *,
+      prd_documents (
+        prd_sections (count)
+      )
+    `)
     .eq('owner_id', user.id)
     .is('deleted_at', null)
     .order('updated_at', { ascending: false });
